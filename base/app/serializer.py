@@ -12,7 +12,7 @@ class client_serializer(serializers.ModelSerializer):
 class user_serializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'username']
 
 
 class project_serializer(serializers.ModelSerializer):

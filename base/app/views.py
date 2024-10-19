@@ -8,7 +8,7 @@ from .models import Client_model, Project_model
 from django.contrib.auth.models import User
 
 
-@api_view(['GET','POST'])
+'''@api_view(['GET','POST'])
 def test(request):
     if request.method == 'GET':
         users = User.objects.all()
@@ -19,7 +19,7 @@ def test(request):
         if serialized.is_valid():
             serialized.save()
             return Response('User Created')
-    return Response("failed")
+    return Response("failed")'''
 
 @api_view(['GET','POST'])
 def client_get_post(request):
@@ -42,16 +42,17 @@ def client_get_post(request):
             return Response({})
     if request.method == 'POST':
         serialized = client_serializer(data=request.data)
-        #response_data = {}
+        response_data = {}
         if serialized.is_valid():
-            client_instance = serialized.save(created_by=request.user)
+            client = serialized.save(created_by=request.user)
             response_data = {
-                'id': client_instance.id,
-                'client_name': client_instance.client_name,
-                'created_at': client_instance.created_at,
-                'created_by': client_instance.created_by.username
+                'id': client.id,
+                'client_name': client.client_name,
+                'created_at': client.created_at,
+                'created_by': client.created_by.username
             }
             return Response(response_data)
+        return Response({})
 
 
 
