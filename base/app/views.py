@@ -73,7 +73,7 @@ def client_get_put_delete(request, id):
         for project in projects:
             response_data['projects'].append({
                 'project_name': project.project_name,
-                'created_by': project.created_by.username  # You might want to add more fields as needed
+                'created_by': project.created_by.username
             })
         return Response(response_data, status=status.HTTP_200_OK)
     if request.method == 'PUT':
