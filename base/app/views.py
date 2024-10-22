@@ -35,7 +35,7 @@ def client_get_post(request):
                     'id' : item['id'],
                     'client_name': item['client_name'],
                     'created_at': item['created_at'],
-                    'created_by_user': client_user.username,
+                    'created_by': client_user.username,
                 })
             return Response(response_data_list)
         else:
