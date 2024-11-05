@@ -1,13 +1,17 @@
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Client_model,Project_model
 from .serializer import ClientSerializer,ProjectSerializer,UserSerializer
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([BasicAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_post_clients(request):
     if request.method == 'GET':
         clients = Client_model.objects.all()
@@ -16,7 +20,6 @@ def get_post_clients(request):
             response_data_list = []
             for item in serialized.data:
                 user = UserSerializer(User.objects.get(pk=item['created_by']))
-                print(user.data)
                 response_data_list.append({
                     'id': item['id'],
                     'client_name': item['client_name'],
@@ -26,6 +29,7 @@ def get_post_clients(request):
             return Response(response_data_list)
         return Response('GET')
     if request.method == 'POST':
+        print(request.user)
         serialized = ClientSerializer(data=request.data)
         #response_data = {}
         if serialized.is_valid():
@@ -41,6 +45,8 @@ def get_post_clients(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([BasicAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_put_delete_client(request, id):
     client = get_object_or_404(Client_model, pk=id)
     user_serialized = UserSerializer(client.created_by)
@@ -76,6 +82,8 @@ def get_put_delete_client(request, id):
 
 
 @api_view(['POST'])
+@authentication_classes([BasicAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def create_project(request, id):
     client = get_object_or_404(Client_model, pk=id)
     user_ids = [user['id'] for user in request.data['users']]
@@ -108,6 +116,8 @@ def create_project(request, id):
 
 
 @api_view(['GET'])
+@authentication_classes([BasicAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def list_projects(request):
     projects = Project_model.objects.filter(user=request.user)
     project_serialized = ProjectSerializer(projects,  many=True)
